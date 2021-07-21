@@ -14,20 +14,20 @@
 // Keymaps are designed to be relatively interchangeable with QMK
 enum custom_keycodes {
 	QWERTY, 
-	NUM,
-    PLUGINS
+	DOWN,
+    UP
 };
 
 //Set these for each layer and use when layers are needed in a hold-to use layer
 enum layer_holds {
-	QWERTY_H = LAYER_HOLD_BASE_VAL, NUM_H,FUNCS_H
+	QWERTY_H = LAYER_HOLD_BASE_VAL,DOWN_H,UP_H
 };
 
 // array to hold names of layouts for oled
 char default_layout_names[LAYERS][MAX_LAYOUT_NAME_LENGTH] = { 
 	"QWERTY", 
-	"NUM", 
-	"Plugins"
+	"DOWN", 
+	"UP"
 };
 
 /* select a keycode for your macro
@@ -73,7 +73,6 @@ uint16_t default_slave_encoder_map[LAYERS][ENCODER_SIZE] = {
 #define _______ KC_TRNS
 #define XXXXXXX KC_NO
 
-//NOTE: For this keymap due to wiring constraints the the two last rows on the left are wired unconventionally
 // Each keymap is represented by an array, with an array that points to all the keymaps  by order
 	 uint16_t _QWERTY[MATRIX_ROWS][KEYMAP_COLS]={
 
@@ -85,18 +84,18 @@ uint16_t default_slave_encoder_map[LAYERS][ENCODER_SIZE] = {
 		* |------+------+------+------+------+------+------+------+------+------+------+------|
 		* | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |  Up  |Enter|
 		* |------+------+------+------+------+------+------+------+------+------+------+------|
-		* |      | LGUI | LCtrl| LAlt | Lower|    Space    | Raise|   /  | Left | Down |Right |
+		* | DFLT | LGUI | LCtrl| LAlt | Lower|    Space    | Raise|   /  | Left | Down |Right |
 		* `-----------------------------------------------------------------------------------'
 		*/ 
 
 		{ KC_ESC,	KC_Q,	KC_W,	KC_E,	KC_R,	KC_T,	KC_Y,	KC_U,	KC_I,	KC_O,	KC_P,     KC_BSPC },
 		{ KC_TAB,	KC_A,	KC_S,	KC_D,	KC_F,	KC_G,	KC_H,	KC_J,	KC_K,	KC_L,	KC_SCLN,  KC_QUOT },
 		{ KC_LSFT,	KC_Z,	KC_X,	KC_C,	KC_V,	KC_B,	KC_N,	KC_M,	KC_COMM,KC_DOT,	KC_UP,    KC_ENT },
-		{ DEFAULT,	KC_LGUI,KC_LCTL,KC_LALT,LOWER,	KC_SPC,	KC_SPC,	RAISE,	KC_SLSH,KC_LEFT,KC_DOWN,  KC_RGHT }
+		{ DEFAULT,	KC_LGUI,KC_LCTL,KC_LALT,DOWN_H,	KC_SPC,	KC_SPC,	UP_H,	KC_SLSH,KC_LEFT,KC_DOWN,  KC_RGHT }
 		
 	};
 
-	uint16_t _NUM[MATRIX_ROWS][KEYMAP_COLS]={
+	uint16_t _DOWN[MATRIX_ROWS][KEYMAP_COLS]={
 
 		/* Lower
 		* ,-----------------------------------------------------------------------------------.
@@ -106,7 +105,7 @@ uint16_t default_slave_encoder_map[LAYERS][ENCODER_SIZE] = {
 		* |------+------+------+------+------+------+------+------+------+------+------+------|
 		* | Caps |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 |      |      | Home |      | End  |
 		* |------+------+------+------+------+------+------+------+------+------+------+------|
-		* |      |      |      |      |      |     Play    |      | Prev | Vol- | Vol+ | Next |
+		* | DFLT |      |      |      |      |     Play    |      | Prev | Vol- | Vol+ | Next |
 		* `-----------------------------------------------------------------------------------'
 		*/
 
@@ -117,7 +116,7 @@ uint16_t default_slave_encoder_map[LAYERS][ENCODER_SIZE] = {
 
 	 };
 
-	uint16_t _PLUGINS[MATRIX_ROWS][KEYMAP_COLS]={
+	uint16_t _UP[MATRIX_ROWS][KEYMAP_COLS]={
 
 				/* Raise
 				* ,-----------------------------------------------------------------------------------.
@@ -127,7 +126,7 @@ uint16_t default_slave_encoder_map[LAYERS][ENCODER_SIZE] = {
 				* |------+------+------+------+------+------+------+------+------+------+------+------|
 				* | Caps |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 | Del  | Bksp |Pg Up |      |Pg Dn |
 				* |------+------+------+------+------+------+------+------+------+------+------+------|
-				* |      |      |      |      |      |     Play    |      | Prev | Vol- | Vol+ | Next |
+				* | DFLT |      |      |      |      |     Play    |      | Prev | Vol- | Vol+ | Next |
 				* `-----------------------------------------------------------------------------------'
 				*/
 
@@ -138,8 +137,8 @@ uint16_t default_slave_encoder_map[LAYERS][ENCODER_SIZE] = {
 
 	};
  //Create an array that points to the various keymaps
-uint16_t (*default_layouts[])[MATRIX_ROWS][KEYMAP_COLS] = { &_QWERTY, &_NUM,
-			&_PLUGINS
+uint16_t (*default_layouts[])[MATRIX_ROWS][KEYMAP_COLS] = { &_QWERTY, &_DOWN,
+			&_UP
 		};
 
 uint8_t current_layout = 0;
