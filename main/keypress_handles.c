@@ -170,6 +170,7 @@ uint8_t *check_key_state(uint16_t **keymap) {
 
 		for (uint8_t col = (MATRIX_COLS * pad); col < ((pad + 1) * (MATRIX_COLS)); col++) {
 			for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
+				
 				if(matrix_state[row][col] == matrix_prev_state[row][col])
 					continue;
 
