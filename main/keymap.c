@@ -47,7 +47,7 @@ uint16_t macros[MACROS_NUM][MACRO_LEN] = {
 		// CTRL+ALT+DEL
 		{ KC_LCTRL, KC_LALT, KC_DEL },
 		//ALT +F4
-		{ KC_RALT, KC_LALT, KC_NO } };
+		{ KC_LSFT, KC_A, KC_NO } };
 
 /*Encoder keys for each layer by order, and for each pad
  * First variable states what usage the encoder has
@@ -82,7 +82,7 @@ uint16_t default_slave_encoder_map[LAYERS][ENCODER_SIZE] = {
 		* |------+------+------+------+------+------+------+------+------+------+------+------|
 		* | Tab  |   A  |   S  |   D  |   F  |   G  |   H  |   J  |   K  |   L  |   ;  |  '   |
 		* |------+------+------+------+------+------+------+------+------+------+------+------|
-		* | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |  Up  |Enter|
+		* | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |  Up  |Enter |
 		* |------+------+------+------+------+------+------+------+------+------+------+------|
 		* | DFLT | LGUI | LCtrl| LAlt | Lower|    Space    | Raise|   /  | Left | Down |Right |
 		* `-----------------------------------------------------------------------------------'
@@ -109,7 +109,7 @@ uint16_t default_slave_encoder_map[LAYERS][ENCODER_SIZE] = {
 		* `-----------------------------------------------------------------------------------'
 		*/
 
-		{ KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS },
+		{ KC_TRNS, KC_ALT_F4, KC_8, KC_7, KC_6, KC_5, KC_4, KC_3, KC_2, KC_1, KC_0, KC_TRNS },
 		{ KC_DEL,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS},
 		{ KC_CAPS, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_NONE, KC_NONE, KC_HOME, KC_NONE,  KC_END },
 		{ DEFAULT, KC_NONE, KC_NONE, KC_NONE, KC_NONE,      KC_MPLY, KC_MPLY,     KC_NONE,    KC_MPRV,    KC_VOLD, KC_VOLU, KC_MNXT }

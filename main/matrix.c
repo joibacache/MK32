@@ -37,13 +37,26 @@ const gpio_num_t MATRIX_ROWS_PINS[] = { GPIO_NUM_2,
 										GPIO_NUM_0,
 										GPIO_NUM_4,
 										GPIO_NUM_16};
+// const gpio_num_t MATRIX_COLS_PINS[] = { GPIO_NUM_15, //esc
+// 										GPIO_NUM_5,  //5-1
+// 										GPIO_NUM_17, //6-2
+// 										GPIO_NUM_33, //1-3 
+// 										GPIO_NUM_32, //2-4
+// 										GPIO_NUM_19, //3-5
+// 										GPIO_NUM_18, //4-6 --
+// 										GPIO_NUM_26, //7-7
+// 										GPIO_NUM_27, //8-8
+// 										GPIO_NUM_14, //9-9
+// 										GPIO_NUM_12, //0-0
+// 										GPIO_NUM_13}; //del
+
 const gpio_num_t MATRIX_COLS_PINS[] = { GPIO_NUM_15,
 										GPIO_NUM_19,
+										GPIO_NUM_18,
 										GPIO_NUM_5,
 										GPIO_NUM_17,
-										GPIO_NUM_32,
 										GPIO_NUM_33,
-										GPIO_NUM_18,
+										GPIO_NUM_32,
 										GPIO_NUM_26,
 										GPIO_NUM_27,
 										GPIO_NUM_14,
@@ -188,18 +201,15 @@ void scan_matrix(void) {
 	for (uint8_t col = 0; col < MATRIX_COLS; col++) {
 		gpio_set_level(MATRIX_COLS_PINS[col], 1);
 		for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
-
 			curState = gpio_get_level(MATRIX_ROWS_PINS[row]);
 			if (PREV_MATRIX_STATE[row][col] != curState) {
 				DEBOUNCE_MATRIX[row][col] = millis();
 			}
 			PREV_MATRIX_STATE[row][col] = curState;
 			if ((millis() - DEBOUNCE_MATRIX[row][col]) > DEBOUNCE) {
-
 				if (MATRIX_STATE[row][col] != curState) {
 					MATRIX_STATE[row][col] = curState;
 				}
-
 			}
 		}
 		gpio_set_level(MATRIX_COLS_PINS[col], 0);
