@@ -45,7 +45,7 @@ uint16_t keycode = 0;
 uint8_t current_report[REPORT_LEN] = { 0 };
 
 // Array to send when releasing macros
-uint8_t macro_release[3] = { 0 };
+uint8_t macro_release[2] = { 0 };
 
 // Flag in order to know when to ignore layer change on layer hold
 uint8_t layer_hold_flag = 0;
@@ -56,29 +56,52 @@ uint16_t check_modifier(uint16_t key) {
 
 	uint8_t cur_mod = 0;
 	// these are the modifier keys
-	if ((KC_LCTRL <= key) && (key <= KC_RGUI)) {
+	if ((KC_LCTRL >= key) && (key <= KC_RGUI)) {
 		cur_mod = (1 << (key - KC_LCTRL));
 		return cur_mod;
 	}
+	printf("modifier %d", cur_mod);
 	return 0;
-
 }
 
 // checking if a led status key was pressed, returning current led status
-uint16_t check_led_status(uint16_t key) {
-
-	switch (key) {
-	case KC_NLCK:
-		return 1;
-
-	case KC_CAPS:
-		return 2;
-
-	case KC_SLCK:
-		return 3;
-
+uint16_t check_led_status(uint16_t key)
+{
+	switch (key)
+	{
+		case KC_NLCK:
+			return 1;
+			break;	
+		case KC_CAPS:
+			return 2;
+			break;
+		case KC_SLCK:
+			return 3;
+			break;
+		default:
+			return 0;
 	}
-	return 0;
+}
+
+uint8_t checkMacro(uint16_t keycode,uint8_t pressed)
+{
+	uint8_t returnValue = false;
+	if ((keycode >= MACRO_BASE_VAL) && (keycode < LAYER_HOLD_BASE_VAL))
+	{
+		for (uint8_t i = 0; i < MACRO_LEN; i++)
+		{
+			uint16_t key = macros[keycode - MACRO_BASE_VAL][i];
+			current_report[REPORT_LEN - 1 - i] = pressed == 1 ? key : 0;
+			if(pressed == 1) {
+				modifier |= check_modifier(key);
+				returnValue = true;
+			}
+			else {
+				modifier &= ~check_modifier(key);
+			}
+		}
+	}
+	return returnValue;
 }
 
 // what to do on a media key press
@@ -159,39 +182,38 @@ void layer_adjust(uint16_t keycode) {
 uint8_t matrix_prev_state[MATRIX_ROWS][MATRIX_COLS] = { 0 };
 
 // checking the state of each key in the matrix
-uint8_t *check_key_state(uint16_t **keymap) {
-
+uint8_t *check_key_state(uint16_t **keymap)
+{
 	scan_matrix();
-	for (uint8_t pad = 0; pad < KEYPADS; pad++) {
-
+	for (uint8_t pad = 0; pad < KEYPADS; pad++) 
+	{
 		uint8_t matrix_state[MATRIX_ROWS][MATRIX_COLS] = { 0 };
 
 		memcpy(matrix_state, matrix_states[pad], sizeof(matrix_state));
 
-		for (uint8_t col = (MATRIX_COLS * pad); col < ((pad + 1) * (MATRIX_COLS)); col++) {
-			for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
-				
+		for (uint8_t col = (MATRIX_COLS * pad); col < ((pad + 1) * (MATRIX_COLS)); col++)
+		{
+			for (uint8_t row = 0; row < MATRIX_ROWS; row++)
+			{	
 				if(matrix_state[row][col] == matrix_prev_state[row][col])
 					continue;
 
 				uint16_t report_index = (2 + col + row * KEYMAP_COLS);
 				keycode = keymap[row][col];
+				// printf("\nkey %d", keycode);
 
 				//checking if the keycode is transparent
-				if (keycode == KC_TRNS) {
+				if (keycode == KC_TRNS){
 					if (current_layout == 0) {
 						keycode = *default_layouts[MAX_LAYER][row][col];
 					} else {
-						keycode =
-								*default_layouts[current_layout - 1][row][col];
+						keycode = *default_layouts[current_layout - 1][row][col];
 					}
 				}
 
 				led_status = check_led_status(keycode);
 				if (matrix_state[row][col - MATRIX_COLS * pad] == 1)
 				{
-					ESP_LOGI(KEY_PRESS_TAG ,"KEY STATE PRESSED! %d ", current_layout);
-
 					//checking for function
 					if (keycode >= PLUGIN_BASE_VAL){
 						plugin_launcher(keycode);
@@ -203,80 +225,56 @@ uint8_t *check_key_state(uint16_t **keymap) {
 							prev_layout = current_layout;
 							current_layout = (keycode - LAYER_HOLD_BASE_VAL);
 							layer_hold_flag = 1;
-#ifdef OLED_ENABLE
-						xQueueSend(layer_recieve_q, &current_layout,
-								(TickType_t) 0);
-#endif
-						ESP_LOGI(KEY_PRESS_TAG,"Layer modified!, Current layer: %d ", current_layout);
+							#ifdef OLED_ENABLE
+							xQueueSend(layer_recieve_q, &current_layout, (TickType_t) 0);
+							#endif
+							// ESP_LOGI(KEY_PRESS_TAG,"Layer modified!, Current layer: %d ", current_layout);
 						}
 						continue;
-
 					}
 
 					// checking for layer adjust keycodes
-					if ((keycode >= LAYERS_BASE_VAL)
-							&& (keycode < MACRO_BASE_VAL)) {
+					if ((keycode >= LAYERS_BASE_VAL) && (keycode < MACRO_BASE_VAL)) {
 						layer_adjust(keycode);
 						continue;
 					}
 
 					// checking for macros
-					if ((keycode >= MACRO_BASE_VAL) && (keycode <= LAYER_HOLD_BASE_VAL)) {
-						for (uint8_t i = 0; i < 3; i++) {
-							uint16_t key = macros[MACRO_BASE_VAL - keycode][i];
-							current_report[REPORT_LEN - 1 - i] = key;
-							modifier |= check_modifier(key);
-							printf("\nmodifier:%d", modifier);
-						}
+					if (checkMacro(keycode,true))
 						continue;
-					}
 
 					// checking for media control keycodes
 					if ((keycode >= KC_MEDIA_NEXT_TRACK) && (keycode <= KC_AUDIO_VOL_DOWN)) {
 						media_control_send(keycode);
 					}
 
-					// checking for system control keycodes
-					//				if((keycode>=0XA8)&&(keycode<=0XA7)){
-					//					system_control(keycode);
-					//					continue;
-					//				}
-
 					if (current_report[report_index] == 0) {
 						modifier |= check_modifier(keycode);
 						current_report[report_index] = keycode;
-
 					}
+					printf("\nkey %d pressed %c", keycode, keycode_to_char(keycode,modifier));
 				}
-				if (matrix_state[row][col - MATRIX_COLS * pad] == 0) {
-					ESP_LOGI(KEY_PRESS_TAG ,"KEY STATE RELEASED! %d ", current_layout);
-
+				// else
+				if (matrix_state[row][col - MATRIX_COLS * pad] == 0)
+				{	
 					//checking for layer hold release
-					if ((layouts[prev_layout][row][col] >= LAYER_HOLD_BASE_VAL)
-							&& (keycode <= LAYER_HOLD_MAX_VAL)
-							&& (layer_hold_flag == 1)) {
+					if ((layouts[prev_layout][row][col] >= LAYER_HOLD_BASE_VAL) 
+						&& (keycode <= LAYER_HOLD_MAX_VAL) 
+						&& (layer_hold_flag == 1))
+					{
 						current_layout = 0;
 						layer_hold_flag = 0;
-#ifdef OLED_ENABLE
-						xQueueSend(layer_recieve_q, &current_layout,
-								(TickType_t) 0);
-#endif
-						ESP_LOGI(KEY_PRESS_TAG,
-								"Layer modified!, Current layer: %d ",
-								current_layout);
+						#ifdef OLED_ENABLE
+							xQueueSend(layer_recieve_q, &current_layout, (TickType_t) 0);
+						#endif
+						// ESP_LOGI(KEY_PRESS_TAG, "Layer modified!, Current layer: %d ", current_layout);
 					}
 
 					//checking if macro was released
-					if ((keycode >= MACRO_BASE_VAL)
-							&& (keycode <= LAYER_HOLD_BASE_VAL)) {
-						for (uint8_t i = 0; i < 3; i++) {
-							uint16_t key = macros[MACRO_BASE_VAL - keycode][i];
-							current_report[REPORT_LEN - 1 - i] = 0;
-							modifier &= ~check_modifier(key);
-						}
-					}
+					checkMacro(keycode,false);
 
-					if (current_report[report_index] != 0) {
+					if (current_report[report_index] != 0)
+					{
 						if (led_status != 0) {
 							led_status = 0;
 						}
@@ -286,17 +284,11 @@ uint8_t *check_key_state(uint16_t **keymap) {
 						current_report[report_index] = 0;
 
 						// checking for media control keycodes
-						if ((keycode >= KC_MEDIA_NEXT_TRACK)
-								&& (keycode <= KC_AUDIO_VOL_DOWN)) {
+						if ((keycode >= KC_MEDIA_NEXT_TRACK) && (keycode <= KC_AUDIO_VOL_DOWN)) {
 							media_control_release(keycode);
 						}
 					}
-
-					// checking for system control keycodes
-					//				if((keycode>=0XA8)&&(keycode<=0XA7)){
-					//					system_control_release(keycode);
-					//					continue;
-					//				}
+					// printf("\nkey %d released %c", keycode, keycode_to_char(keycode,modifier));
 
 				}
 			}
@@ -306,7 +298,7 @@ uint8_t *check_key_state(uint16_t **keymap) {
 	current_report[0] = modifier;
 	current_report[1] = led_status;
 	return current_report;
-
 }
+
 
 #endif

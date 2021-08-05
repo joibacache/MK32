@@ -74,6 +74,7 @@ void enable_ble(void) {
  * @brief retrieve chars corresponding to keycode
  */
 char keycode_to_char(uint16_t keycode, uint8_t modifier) {
+	// ESP_LOGI(TAG, "keycode_to_char");
 
 	char key_ascii = CHAR_ILLEGAL;
 	if ((CHECK_BIT(modifier, 1) != 0) || (CHECK_BIT(modifier, 2) != 0)) {
