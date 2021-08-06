@@ -274,11 +274,8 @@ enum {
 /// Client Characteristic Configuration Codes
 enum {
 	HIDD_LE_DESC_MASK = 0x10,
-
-	HIDD_LE_BOOT_KB_IN_REPORT_CFG = HIDD_LE_BOOT_KB_IN_REPORT_CHAR
-			| HIDD_LE_DESC_MASK,
-	HIDD_LE_BOOT_MOUSE_IN_REPORT_CFG = HIDD_LE_BOOT_MOUSE_IN_REPORT_CHAR
-			| HIDD_LE_DESC_MASK,
+	HIDD_LE_BOOT_KB_IN_REPORT_CFG = HIDD_LE_BOOT_KB_IN_REPORT_CHAR | HIDD_LE_DESC_MASK,
+	HIDD_LE_BOOT_MOUSE_IN_REPORT_CFG = HIDD_LE_BOOT_MOUSE_IN_REPORT_CHAR | HIDD_LE_DESC_MASK,
 	HIDD_LE_REPORT_CFG = HIDD_LE_REPORT_CHAR | HIDD_LE_DESC_MASK,
 };
 
@@ -394,8 +391,7 @@ bool hidd_clcb_dealloc(uint16_t conn_id);
 
 void hidd_le_create_service(esp_gatt_if_t gatts_if);
 
-void hidd_set_attr_value(uint16_t handle, uint16_t val_len,
-		const uint8_t *value);
+void hidd_set_attr_value(uint16_t handle, uint16_t val_len, const uint8_t *value);
 
 void hidd_get_attr_value(uint16_t handle, uint16_t *length, uint8_t **value);
 

@@ -53,23 +53,31 @@ static uint8_t hidd_service_uuid128[] = {
 		0x12, 0x18, 0x00, 0x00, };
 
 /** @brief Advertising data for BLE */
-static esp_ble_adv_data_t hidd_adv_data = { .set_scan_rsp = false,
-		.include_name = true, .include_txpower = true, .min_interval = 0x0006, //slave connection min interval, Time = min_interval * 1.25 msec
+static esp_ble_adv_data_t hidd_adv_data = { 
+		.set_scan_rsp = false,
+		.include_name = true, 
+		.include_txpower = true, 
+		.min_interval = 0x0006, //slave connection min interval, Time = min_interval * 1.25 msec
 		.max_interval = 0x0010, //slave connection max interval, Time = max_interval * 1.25 msec
 		.appearance = 0x03c0,       //HID Generic,
-		.manufacturer_len = 0, .p_manufacturer_data = NULL, .service_data_len =
-				0, .p_service_data = NULL, .service_uuid_len =
-				sizeof(hidd_service_uuid128), .p_service_uuid =
-				hidd_service_uuid128, .flag = 0x6, };
+		.manufacturer_len = 0, 
+		.p_manufacturer_data = NULL, 
+		.service_data_len = 0,
+		.p_service_data = NULL, 
+		.service_uuid_len = sizeof(hidd_service_uuid128),
+		.p_service_uuid = hidd_service_uuid128,
+		.flag = 0x6, };
 
 /** @brief Advertising parameters */
-static esp_ble_adv_params_t hidd_adv_params = { .adv_int_min = 0x20,
-		.adv_int_max = 0x30, .adv_type = ADV_TYPE_IND, .own_addr_type =
-				BLE_ADDR_TYPE_PUBLIC,
+static esp_ble_adv_params_t hidd_adv_params = { 
+		.adv_int_min = 0x20,
+		.adv_int_max = 0x30, 
+		.adv_type = ADV_TYPE_IND, 
+		.own_addr_type = BLE_ADDR_TYPE_PUBLIC,
 		//.peer_addr            =
 		//.peer_addr_type       =
-		.channel_map = ADV_CHNL_ALL, .adv_filter_policy =
-				ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY, };
+		.channel_map = ADV_CHNL_ALL,
+		.adv_filter_policy = ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY, };
 
 ///@brief Is Keyboard interface active?
 uint8_t activateKeyboard = 0;
