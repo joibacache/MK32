@@ -54,13 +54,12 @@ uint8_t prev_layout = 0;
 // checking if a modifier key was pressed
 uint16_t check_modifier(uint16_t key) {
 
-	// uint8_t cur_mod = 0;
-	// // these are the modifier keys
-	// if ((KC_LCTRL >= key) && (key <= KC_RGUI)) {
-	// 	cur_mod = (1 << (key - KC_LCTRL));
-	// 	return cur_mod;
-	// }
-	// printf("modifier %d", cur_mod);
+	uint8_t cur_mod = 0;
+	// these are the modifier keys
+	if ((KC_LCTRL >= key) && (key <= KC_RGUI)) {
+		cur_mod = (1 << (key - KC_LCTRL));
+		return cur_mod;
+	}
 	return 0;
 }
 
@@ -93,7 +92,6 @@ void media_control_send(uint16_t keycode) {
 	xQueueSend(media_q, (void*) &media_state, (TickType_t) 0);
 }
 
-//TODO: ADD DESCRIPTION
 void media_control_release(uint16_t keycode) {
 	uint8_t media_state[2] = { 0 };
 	xQueueSend(media_q, (void*) &media_state, (TickType_t) 0);
@@ -118,7 +116,6 @@ uint16_t check_led_status(uint16_t key)
 	}
 }
 
-//TODO: ADD DESCRIPTION
 uint8_t checkMacro(uint16_t keycode, uint8_t pressed)
 {
 	uint8_t returnValue = false;
@@ -126,7 +123,9 @@ uint8_t checkMacro(uint16_t keycode, uint8_t pressed)
 	{
 		for (uint8_t i = 0; i < MACRO_LEN; i++)
 		{
-			uint16_t key = macros[keycode - MACRO_BASE_VAL][i];
+			// uint16_t key = macros[keycode - MACRO_BASE_VAL][i];
+			uint16_t key = macros[MACRO_BASE_VAL - keycode][i];
+
 			current_report[REPORT_LEN - 1 - i] = pressed == 1 ? key : 0;
 			if(pressed == 1) {
 				modifier |= check_modifier(key);
@@ -137,10 +136,11 @@ uint8_t checkMacro(uint16_t keycode, uint8_t pressed)
 			}
 		}
 	}
+	printf("\nCheckMacro: %d",returnValue);
+
 	return returnValue;
 }
 
-//TODO: ADD DESCRIPTION
 uint8_t checkHoldLayer(uint16_t keycode, uint8_t layer_hold_flag, uint8_t pressed, uint8_t col, uint8_t row)
 {
 	uint8_t returnValue = false;
@@ -159,7 +159,7 @@ uint8_t checkHoldLayer(uint16_t keycode, uint8_t layer_hold_flag, uint8_t presse
 			returnValue = true;
 		}
 	}
-	else{
+	else {
 		//checking for layer hold release
 		if ((layouts[prev_layout][row][col] >= LAYER_HOLD_BASE_VAL) && (keycode <= LAYER_HOLD_MAX_VAL) 
 		&& (layer_hold_flag == 1))
@@ -172,10 +172,10 @@ uint8_t checkHoldLayer(uint16_t keycode, uint8_t layer_hold_flag, uint8_t presse
 			// ESP_LOGI(KEY_PRESS_TAG, "Layer modified!, Current layer: %d ", current_layout);
 		}
 	}
+	printf("\nHoldLayer: %d",returnValue);
 	return returnValue;
 }
 
-//TODO: ADD DESCRIPTION
 uint8_t checkPluginLauncher(uint16_t keycode, uint8_t pressed)
 {
 	uint8_t returnValue = false;
@@ -183,10 +183,10 @@ uint8_t checkPluginLauncher(uint16_t keycode, uint8_t pressed)
 		plugin_launcher(keycode);
 		returnValue = true;
 	}
+	printf("\npluginlauncher: %d",returnValue);
 	return returnValue;
 }
 
-//TODO: ADD DESCRIPTION
 void checkMediaControl(uint16_t keycode, uint8_t pressed){
 	if ((keycode >= KC_MEDIA_NEXT_TRACK) && (keycode <= KC_AUDIO_VOL_DOWN)) {
 		if(pressed)
@@ -196,13 +196,13 @@ void checkMediaControl(uint16_t keycode, uint8_t pressed){
 	}
 }
 
-//TODO: ADD DESCRIPTION
 void reportUpdate(uint16_t report_index, uint8_t pressed,uint8_t col, uint8_t row)
 {
 	if(pressed)
 	{
 		if (current_report[report_index] == 0) {
-			modifier |= check_modifier(keycode);
+			printf("\nreportupdate keycode %d:",keycode);
+			// modifier |= check_modifier(keycode);
 			current_report[report_index] = keycode;
 		}	
 	}
@@ -221,7 +221,6 @@ void reportUpdate(uint16_t report_index, uint8_t pressed,uint8_t col, uint8_t ro
 	}
 }
 
-//TODO: ADD DESCRIPTION
 static uint32_t millis() {
 	return esp_timer_get_time() / 1000;
 }
@@ -253,16 +252,15 @@ void layer_adjust(uint16_t keycode) {
 				current_layout++;
 				break;
 			}
-#ifdef OLED_ENABLE
+			#ifdef OLED_ENABLE
 			xQueueSend(layer_recieve_q, &current_layout, (TickType_t) 0);
-#endif
+			#endif
 			ESP_LOGI(KEY_PRESS_TAG, "Layer modified!, Current layer: %d ", current_layout);
 		}
 	}
 	prev_time = cur_time;
 }
 
-//TODO: ADD DESCRIPTION
 uint8_t checkLayerAdjust(uint16_t keycode, uint8_t pressed)
 {
 	uint8_t returnValue = false;
@@ -270,6 +268,7 @@ uint8_t checkLayerAdjust(uint16_t keycode, uint8_t pressed)
 		layer_adjust(keycode);
 		returnValue = true;
 	}
+	printf("\nLayerAdjust: %d",returnValue);
 	return returnValue;
 }
 
@@ -293,12 +292,25 @@ void printReport(uint8_t keyPressed)
 	printf("\nreport sent");
 }
 
-void printActiveModifiers()
+void printActiveModifiers(uint8_t keyPressed)
 {
+	if(!keyPressed)
+		return;
+	char modifiers[8][8] = {
+		"LFT_CTL",
+		"LFT_SFT",
+		"LFT_ALT",
+		"LFT_GUI",
+		"RGT_CTL",
+		"RGT_SFT",
+		"RGT_ALT",
+		"RGT_GUI"
+	};
+
 	int i;
-	for(i =0;i<8;i++){
-		// (modifier[bit / 8] >> (bit % 8)) & 1
-		printf("bit %d = %c",i+1,(modifier >> (i % 8)) & 1);
+	printf("\n");
+	for(i=0;i<8;i++){
+		printf("%s = %d ",modifiers[i], (modifier >> (i % 8)) & 1);
 	}
 }
 
@@ -319,6 +331,7 @@ uint8_t *check_key_state(uint16_t **keymap)
 			{	
 				if(matrix_state[row][col] == matrix_prev_state[row][col])	
 					continue;
+				// printf("\n=============================================\n");
 
 				keycode = keymap[row][col];
 				//checking if the keycode is transparent
@@ -335,33 +348,35 @@ uint8_t *check_key_state(uint16_t **keymap)
 				uint16_t report_index = (2 + col + (row * KEYMAP_COLS));
 				keypressStatus = matrix_state[row][col - MATRIX_COLS * pad] == 1;
 				if(keypressStatus)
-				printf("\nkey pressed");
+					printf("\nkey pressed %d",keycode);
 				else
-				printf("\nkey released");
-				//checking for plugin launchers
-				if(checkPluginLauncher(keycode, keypressStatus))
-					continue;
+					printf("\nkey released");
 				
-				//checking for layer hold
-				if(checkHoldLayer(keycode, layer_hold_flag, keypressStatus, col, row))
-					continue;
+				// //checking for plugin launchers
+				// if(checkPluginLauncher(keycode, keypressStatus))
+				// 	continue;
+				
+				// //checking for layer hold
+				// if(checkHoldLayer(keycode, layer_hold_flag, keypressStatus, col, row))
+				// 	continue;
 
-				// checking for layer adjust keycodes
-				if(checkLayerAdjust(keycode, keypressStatus))
-					continue;
+				// // checking for layer adjust keycodes
+				// if(checkLayerAdjust(keycode, keypressStatus))
+				// 	continue;
 
-				// checking for macros
-				if (checkMacro(keycode, keypressStatus))
-					continue;
+				// // checking for macros
+				// if (checkMacro(keycode, keypressStatus))
+				// 	continue;
 
-				// checking for media control keycodes
-				checkMediaControl(keycode, keypressStatus);
+				// // checking for media control keycodes
+				// checkMediaControl(keycode, keypressStatus);
 
 				//updating report
 				reportUpdate(report_index, keypressStatus, col, row);
 
-				printReport(keypressStatus);
-				printActiveModifiers();
+				// printReport(keypressStatus);
+				// printActiveModifiers(keypressStatus);
+				// printf("\n fin\n");
 			}
 		}
 		memcpy(matrix_prev_state, matrix_state, sizeof(matrix_state));

@@ -37,15 +37,15 @@ char default_layout_names[LAYERS][MAX_LAYOUT_NAME_LENGTH] = {
 #define MACROS_NUM 10
 enum custom_macros {
 	KC_SFT1 = MACRO_BASE_VAL, 
-	KC_SFT2,
-	KC_SFT3,
-	KC_SFT4,
-	KC_SFT5,
-	KC_SFT6,
-	KC_SFT7,
-	KC_SFT8,
-	KC_SFT9,
-	KC_SFT0
+	// KC_SFT2,
+	// KC_SFT3,
+	// KC_SFT4,
+	// KC_SFT5,
+	// KC_SFT6,
+	// KC_SFT7,
+	// KC_SFT8,
+	// KC_SFT9,
+	// KC_SFT0
 };
 
 /*define what the macros do
@@ -54,24 +54,24 @@ enum custom_macros {
 uint16_t macros[MACROS_NUM][MACRO_LEN] = {
 		// SHIFT + 1
 		{ KC_LSFT, KC_1 },
-		// SHIFT + 2
-		{ KC_LSFT, KC_2 },
-		// SHIFT + 3
-		{ KC_LSFT, KC_3 },
-		// SHIFT + 4
-		{ KC_LSFT, KC_4 },
-		// SHIFT + 5
-		{ KC_LSFT, KC_5 },
-		// SHIFT + 6
-		{ KC_LSFT, KC_6 },
-		// SHIFT + 7
-		{ KC_LSFT, KC_7 },
-		// SHIFT + 8
-		{ KC_LSFT, KC_8 },
-		// SHIFT + 9
-		{ KC_LSFT, KC_9 },
-		// SHIFT + 0
-		{ KC_LSFT, KC_0 }
+		// // SHIFT + 2
+		// { KC_LSFT, KC_2 },
+		// // SHIFT + 3
+		// { KC_LSFT, KC_3 },
+		// // SHIFT + 4
+		// { KC_LSFT, KC_4 },
+		// // SHIFT + 5
+		// { KC_LSFT, KC_5 },
+		// // SHIFT + 6
+		// { KC_LSFT, KC_6 },
+		// // SHIFT + 7
+		// { KC_LSFT, KC_7 },
+		// // SHIFT + 8
+		// { KC_LSFT, KC_8 },
+		// // SHIFT + 9
+		// { KC_LSFT, KC_9 },
+		// // SHIFT + 0
+		// { KC_LSFT, KC_0 }
 	};
 
 /*Encoder keys for each layer by order, and for each pad
@@ -134,32 +134,31 @@ uint16_t default_slave_encoder_map[LAYERS][ENCODER_SIZE] = {
 		* `-----------------------------------------------------------------------------------'
 		*/
 
-		{ KC_GRV,  KC_SFT1, KC_SFT2, KC_SFT3, KC_SFT4, KC_SFT5, KC_SFT6, KC_SFT7, KC_SFT8, KC_SFT9, KC_SFT0, KC_NONE },
+		{ KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_NONE },
 		{ KC_CAPS, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS},
-		{ KC_LSFT, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_NONE, KC_NONE, KC_HOME, KC_NONE,  KC_END },
-		{ DEFAULT, KC_NONE, KC_NONE, KC_NONE, KC_NONE,      KC_MPLY, KC_MPLY,     KC_NONE,    KC_MPRV,    KC_VOLD, KC_VOLU, KC_MNXT }
+		{ KC_LSFT, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_NONE, KC_NONE, KC_HOME, KC_NONE, KC_END },
+		{ DEFAULT, KC_NONE, KC_NONE, KC_NONE, KC_NONE, KC_MPLY, KC_MPLY, KC_NONE, KC_MPRV, KC_VOLD, KC_VOLU, KC_MNXT }
 
 	 };
 
 	uint16_t _UP[MATRIX_ROWS][KEYMAP_COLS]={
 
-				/* Raise
-				* ,-----------------------------------------------------------------------------------.
-				* |   `  |   1  |   2  |   3  |   4  |   5  |   6  |   7  |   8  |   9  |   0  | Bksp |
-				* |------+------+------+------+------+------+------+------+------+------+------+------|
-				* | Del  |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |   -  |   =  |   [  |   ]  |  \   |
-				* |------+------+------+------+------+------+------+------+------+------+------+------|
-				* | Shift |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 | Del  | Bksp |Pg Up |      |Pg Dn |
-				* |------+------+------+------+------+------+------+------+------+------+------+------|
-				* | DFLT |      |      |      |      |     Play    |      | Prev | Vol- | Vol+ | Next |
-				* `-----------------------------------------------------------------------------------'
-				*/
+		/* Raise
+		* ,-----------------------------------------------------------------------------------.
+		* |   `  |   1  |   2  |   3  |   4  |   5  |   6  |   7  |   8  |   9  |   0  | Bksp |
+		* |------+------+------+------+------+------+------+------+------+------+------+------|
+		* | Del  |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |   -  |   =  |   [  |   ]  |  \   |
+		* |------+------+------+------+------+------+------+------+------+------+------+------|
+		* | Shift |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 | Del  | Bksp |Pg Up |      |Pg Dn |
+		* |------+------+------+------+------+------+------+------+------+------+------+------|
+		* | DFLT |      |      |      |      |     Play    |      | Prev | Vol- | Vol+ | Next |
+		* `-----------------------------------------------------------------------------------'
+		*/
 
-				{ KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_NONE },
-				{ KC_DEL,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_MINS, KC_EQL,  KC_LBRC, KC_RBRC, KC_BSLS },
-				{ KC_LSFT, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,  KC_BSPC, KC_PGUP, KC_NO, KC_PGDN },
-				{ DEFAULT, KC_NONE, KC_NONE, KC_NONE, KC_NONE,      KC_MPLY,KC_MPLY,     KC_NONE, KC_MPRV, KC_VOLD, KC_VOLU, KC_MNXT }
-
+		{ KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_NONE },
+		{ KC_DEL,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_MINS, KC_EQL,  KC_LBRC, KC_RBRC, KC_BSLS },
+		{ KC_LSFT, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,  KC_BSPC, KC_PGUP, KC_NO,	 KC_PGDN },
+		{ DEFAULT, KC_NONE, KC_NONE, KC_NONE, KC_NONE, KC_MPLY,	KC_MPLY, KC_NONE, KC_MPRV, KC_VOLD, KC_VOLU, KC_MNXT }
 	};
  //Create an array that points to the various keymaps
 uint16_t (*default_layouts[])[MATRIX_ROWS][KEYMAP_COLS] = { &_QWERTY, &_DOWN,
